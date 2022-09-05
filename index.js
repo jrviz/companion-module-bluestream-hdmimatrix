@@ -1,5 +1,4 @@
 // BLUESTREAM HDMI MATRIX EXTENDER
-// remove console.log
 
 let tcp = require('../../tcp')
 let instance_skel = require('../../instance_skel')
@@ -156,20 +155,15 @@ Matrix-4x4>
 				.toString('utf8')
 				.split(/[\r?\n]+/)
 				.filter((element) => element)
-			//console.log(lines)
 			if (lines.length > 0) {
 				for (index = 0; index < lines.length; index++) {
-					//console.log ('Index: ' + index)
 					if (lines[index].length > 0) {
-						//console.log('At Index:'+index)
 						let tokens = lines[index].split(/[\t ]+/)
 						if (this.config.log_tokens) {
 							this.log('info', 'Tokens: ' + tokens)
 						}
 						capture = true
 						lookahead = 1
-						//console.log('Next line: ' + index)
-						//console.log(tokens)
 						// switch on left slice value of line
 						switch (tokens[0]) {
 							case '[SUCCESS]Set':
@@ -184,28 +178,21 @@ Matrix-4x4>
 										if (this.config.log_tokens) {
 											this.log('info', 'Local Tokens: ' + localTokens)
 										}
-										//console.log('Lookahead: '+lookahead)
-										//console.log(localTokens)
 										channel = parseInt(localTokens[0])
 										if (!isNaN(channel)) {
 											// is a number
-											//console.log('local line OP: ' + lookahead + ', channel: ' + channel)
-											//console.log(localTokens)
 											this.updateRoute(channel, parseInt(localTokens[1]))
 											this.updateHDMI(channel, localTokens[3] == 'No' ? 'disable' : 'enable')
 											this.updateCAT(channel, localTokens[4] == 'OFF' ? 'disable' : 'enable')
 										} else {
-											//console.log('blank?')
 											capture = false
 										}
 									} else {
-										//console.log('undefined')
 										capture = false
 									}
 									lookahead++
 								} while (capture)
 								index += lookahead - 1 // to avoid skipping line when for loop increments
-								//console.log('next index OP: '+index)
 								break
 							case 'Audio':
 								do { // now look ahead for line items until a blank line
@@ -218,8 +205,6 @@ Matrix-4x4>
 										channel = parseInt(localTokens[0])
 										if (!isNaN(channel)) {
 											// is a number
-											//console.log('local line AU: ' + lookahead + ', channel: ' + channel)
-											//console.log(localTokens)
 											// explicit token check to protect against occasional odd responses from the unit
 											if (localTokens[2] == 'OFF') {
 												this.updateMUTE(channel, 'disable')
@@ -236,7 +221,6 @@ Matrix-4x4>
 									lookahead++
 								} while (capture)
 								index += lookahead - 1 // to avoid skipping line when for loop increments
-								//console.log('next index AU: '+index)
 								break
 						}
 					}
@@ -278,11 +262,9 @@ Matrix-4x4>
 	}
 
 	updateRoute(output, input) {
-		//console.log('UR: '+output+' : '+input)
 		this.outputRoute[output] = input
 		this.setVariable(`output_route${output}`, input)
 		this.updateMatrixVariables()
-		//console.log(this.outputRoute)
 	}
 
 	updateCAT(output, stateToggle) {
